@@ -1,0 +1,133 @@
+package Bugarin;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.tree.*;
+
+public class Busqueda {
+	Scanner scan = new Scanner(System.in);
+	DefaultMutableTreeNode nodo,raiz,nodoaux;
+	JTree arbol;
+	
+	//Se tiene que tomar en cuenta para estas busquedas que los arboles tienen que ser binarios.
+	//Esto quiere decir que un nodo siempre puede tener dos hijos o cero hijos.
+	
+	public Busqueda() {
+		//Declaraciones de variables
+		String cad = scan.next(),aux = "";
+		char c;
+		raiz = new DefaultMutableTreeNode();
+		//Ciclo para verificar cada caracter de una cadena
+		for(int i = 0 ; i<cad.length();i++) {
+			//Toma el caracter de la posición i del string
+			c = cad.charAt(i);
+			if(!(c=='*'||c=='/'||c=='-'||c=='+')) {
+				//Si no es un operador guarda el numero en una variable aux
+				aux+=c;
+				//Si es el ultimo elemento y es un numero lo guarda en el nodo.
+				if(i==cad.length()-1)
+					nodoaux.add(new DefaultMutableTreeNode(aux));
+				continue;
+			}
+			if(raiz.isLeaf()) {
+				//Pregunta si la raiz tiene algun nodo, si no, es que es el primero.
+				//Crea un nuevo nodo y le asigna el caracter
+				nodo = new DefaultMutableTreeNode(c);
+				//añade el valor guardado anteriormente a un nuevo nodo y lo asigna como subnodo del nodo
+				nodo.add(new DefaultMutableTreeNode(aux));
+				//Añade el nodo a la raiz
+				raiz.add(nodo);
+			}
+			else {
+				//Si no es el primero.
+				//Crea un nuevo nodo y le asigna el caracter
+				nodoaux = new DefaultMutableTreeNode(c);
+				//añade el valor guardado anteriormente a un nuevo nodo y lo asigna como subnodo del nodo
+				nodoaux.add(new DefaultMutableTreeNode(aux));
+				//Añade el nodo al nodo anterior
+				nodo.add(nodoaux);
+				//Guarda la direccion del nodoactual al nodo para la siguiente iteración.
+				nodo=nodoaux;
+			}
+			//Limpia aux.
+			aux = "";
+		}
+		//Crea la estructura arbol
+		arbol = new JTree(raiz);
+		//Toma la raiz del arbol.
+		DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) arbol.getModel().getRoot();
+		//Crea una enumeration para obtener los nodos hijos de la raiz(el primero es nulo, pero tiene hijos)
+		Enumeration < DefaultMutableTreeNode > e = raiz.children();
+		Enumeration < DefaultMutableTreeNode > e2 = raiz.children();
+		Enumeration < DefaultMutableTreeNode > e3 = raiz.children();
+		System.out.print("Expresion preorder: ");
+		//llama al metodo y le manda el siguiente elemento(uno con un valor asociado)
+		preorder(e.nextElement());
+		System.out.print("\nExpresion inorder: ");
+		//llama al metodo y le manda el siguiente elemento(uno con un valor asociado)
+		inorder(e2.nextElement());
+		System.out.print("\nExpresion postorder: ");
+		//llama al metodo y le manda el siguiente elemento(uno con un valor asociado)
+		postorder(e3.nextElement());
+	}
+	//Busqueda donde se imprime el primer nodo que encuentra
+	private void preorder(DefaultMutableTreeNode e) {
+		//Si el nodo es nulo es invalido.
+		if(e==null)
+			return;
+		//Toma los hijos del nodo actual
+		Enumeration<DefaultMutableTreeNode> ch = e.children();
+		if(!ch.hasMoreElements()) {
+			//Si el elemento acutal no tiene hijos imprime este nodo
+			System.out.print(e.toString());
+			return;
+		}
+		//De lo contrario imprime el nodo actual.
+		System.out.print(e.toString());
+		//Se llama a si mismo para tomar el primer hijo
+		preorder(ch.nextElement());
+		//Se llama a si mismo para tomar el segundo hijo
+		preorder(ch.nextElement());
+	}
+	//Busqueda donde se imprime primero el nodo izquierdo, luego el padre, y ultimo el derecho.
+	private void inorder(DefaultMutableTreeNode e) {
+		//Si el nodo es nulo es invalido.
+		if(e==null)
+			return;
+		//Toma los hijos del nodo actual
+		Enumeration<DefaultMutableTreeNode> ch = e.children();
+		if(!ch.hasMoreElements()) {
+			//Si el elemento acutal no tiene hijos imprime este nodo
+			System.out.print(e.toString());
+			return;
+		}
+		//De lo contrario se llama a si mismo para tomar el primer hijo
+		inorder(ch.nextElement());
+		//imprime el nodo actual.
+		System.out.print(e.toString());
+		//Se llama a si mismo para tomar el segundo hijo
+		inorder(ch.nextElement());
+	}
+	//Busqueda donde se imprimen primero los hijos y luego los padres.
+	private void postorder(DefaultMutableTreeNode e) {
+		//Si el nodo es nulo es invalido.
+		if(e==null)
+			return;
+		//Toma los hijos del nodo actual
+		Enumeration<DefaultMutableTreeNode> ch = e.children();
+		if(!ch.hasMoreElements()) {
+			//Si el elemento acutal no tiene hijos imprime este nodo
+			System.out.print(e.toString());
+			return;
+		}
+		//De lo contrario se llama a si mismo para tomar el primer hijo
+		postorder(ch.nextElement());
+		//Se llama a si mismo para tomar el segundo hijo
+		postorder(ch.nextElement());
+		//imprime el nodo actual.
+		System.out.print(e.toString());
+	}
+	
+	public static void main(String [] args) {
+		new Busqueda();
+	}
+}
